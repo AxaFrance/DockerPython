@@ -25,7 +25,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
 
-  build_api:
+  build_image:
     environment: MLOpsPython
     needs: tags
     runs-on: ubuntu-latest
