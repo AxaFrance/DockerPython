@@ -5,11 +5,11 @@ dependencies:
   - python=3.8.3
 
   - conda-forge::jq
-  #- pip=22.2.*
+  - pip=22.2.*
 
   - pip:
       # dependencies with versions aligned with conda_dependencies.yml.
-      - azureml-sdk==1.44.*
+    #  - azureml-sdk==1.44.*
 
       # Additional pip dependencies for the CI environment.
      # - pytest==5.4.*
@@ -18,4 +18,4 @@ dependencies:
      # - python-dotenv==0.12.*
      # - flake8==3.7.*
      # - flake8_formatter_junit_xml==0.0.*
-      - azure-cli==2.39.*
+  #    - azure-cli==2.39.*
