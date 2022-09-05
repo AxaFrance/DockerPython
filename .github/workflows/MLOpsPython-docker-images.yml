@@ -1,0 +1,66 @@
+name: MLOpsPython Docker Images CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  tags:
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.tag.outputs.new_version }}
+    steps:
+      - uses: actions/checkout@master
+      - name: Bump version and push tag
+        id: tag_version
+        if: github.ref == 'refs/heads/main'
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Add tag to output step
+        id: tag
+        if: github.ref == 'refs/heads/main'
+        run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
+
+  build_api:
+    environment: MLOpsPython
+    needs: tags
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: axaguildev/mlopspython
+
+    - name: Build and push Docker image
+      if: github.ref == 'refs/heads/main'
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: axaguildev/mlopspython:${{ needs.tags.outputs.new_version }},axaguildev/mlopspython:latest
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Build and push Docker image
+      if: github.ref != 'refs/heads/main'
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
