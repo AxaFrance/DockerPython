@@ -21,6 +21,10 @@ COPY /ci_dependencies.yaml /setup/
 # activate environment
 ENV PATH /usr/local/envs/mlopspython_ci/bin:$PATH
 
+RUN conda config --set channel_priority strict
+RUN conda config --remove channels conda-forge
+RUN conda config --show channels
+RUN conda config --add channels conda-forge
 RUN conda update -n base -c defaults conda 
 RUN conda install python=3.8.3 -k
 RUN conda env create -f /setup/ci_dependencies.yaml -v -k
