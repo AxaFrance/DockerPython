@@ -21,9 +21,9 @@ COPY /ci_dependencies.yaml /setup/
 # activate environment
 ENV PATH /usr/local/envs/mlopspython_ci/bin:$PATH
 
-RUN conda update -n base -c defaults conda && \
-    conda install python=3.8.3 && \
-    conda env create -f /setup/ci_dependencies.yml && \
-    /bin/bash -c "source activate mlopspython_ci" && \
-    az --version && \
-    chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8
+RUN conda update -n base -c defaults conda 
+RUN conda install python=3.8.3 
+RUN conda env create -f /setup/ci_dependencies.yml 
+RUN /bin/bash -c "source activate mlopspython_ci" 
+RUN az --version
+RUN chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8
