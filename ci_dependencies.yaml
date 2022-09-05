@@ -2,10 +2,10 @@ name: mlopspython_ci
 
 dependencies:
   # The python interpreter version.
-  - python=3.8.*
+  - python=3.8.3
 
   - conda-forge::jq
- # - pip=22.2.*
+  - pip=22.2.*
 
   - pip:
       # dependencies with versions aligned with conda_dependencies.yml.
