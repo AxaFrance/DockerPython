@@ -33,6 +33,7 @@ RUN conda install python=3.8.3 -k
 RUN conda env create -f /setup/ci_dependencies.yaml -v -k
 RUN /bin/bash -c "source activate mlopspython_ci"  
 
-RUN chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8
+RUN ls /usr/local/envs/mlopspython_ci/lib/
+RUN chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8.3
 
 
