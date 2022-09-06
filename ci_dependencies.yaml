@@ -18,4 +18,4 @@ dependencies:
      # - python-dotenv==0.12.*
      # - flake8==3.7.*
      # - flake8_formatter_junit_xml==0.0.*
-      - azure-cli==2.39.*
+     # - azure-cli==2.39.*
