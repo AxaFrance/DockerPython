@@ -14,7 +14,6 @@ RUN conda update -n base -c defaults conda && \
     conda install python=3.8.3 && \
     conda env create -f /setup/ci_dependencies.yaml && \
     /bin/bash -c "source activate mlopspython_ci" && \
-    az --version && \
     chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8
 
 
