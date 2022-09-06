@@ -7,6 +7,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+RUN az --version
+
 # Install miniconda
 ENV CONDA_DIR /opt/conda
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
@@ -14,7 +17,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 
 # Put conda in path so we can use conda activate
 ENV PATH=$CONDA_DIR/bin:$PATH
-
 
 COPY /ci_dependencies.yaml /setup/
 
@@ -28,7 +30,8 @@ RUN conda config --add channels conda-forge
 RUN conda update -n base -c defaults conda 
 RUN conda install python=3.8.3 -k
 RUN conda env create -f /setup/ci_dependencies.yaml -v -k
-RUN /bin/bash -c "source activate mlopspython_ci" 
-RUN /bin/bash -c "az --version" 
-RUN az --version
+RUN /bin/bash -c "source activate mlopspython_ci"  
+
 RUN chmod -R 777 /usr/local/envs/mlopspython_ci/lib/python3.8
+
+
