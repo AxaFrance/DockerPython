@@ -96,7 +96,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: ./ubi
-        file : "./ubi/Dockerfile.ubi8-tesseract"
+        file : "./Dockerfile.ubi8-tesseract"
         build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
         push: true
         tags: axaguildev/build-ubi8-python3.8-tesseract:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8-python3.8-tesseract:latest
@@ -107,7 +107,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: ./ubi
-        file : "./ubi/Dockerfile.ubi8-tesseract"
+        file : "./Dockerfile.ubi8-tesseract"
         build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
         push: true
         tags: ${{ steps.meta.outputs.tags }}
