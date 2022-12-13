@@ -1,4 +1,4 @@
-name: MLOpsPython Docker Images CI
+name: Docker Images CI
 
 on:
   push:
