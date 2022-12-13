@@ -67,12 +67,11 @@ COPY ./root/ /
 #  -c "Default Application User" default && \
 #  chown -R ${USER}:0 ${APP_ROOT}
 
-RUN INSTALL_PKGS="python38" && \
-  microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+RUN INSTALL_PKGS="python38 python38-devel python38-setuptools python38-pip gcc diffutils file make gcc-c++ cmake git" && \
+  dnf -y module enable python38:3.8 && \
+  dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
   rpm -V $INSTALL_PKGS && \
-  microdnf -y clean all --enablerepo='*'
-
-RUN python3 -m pip install --upgrade pip
+  dnf -y clean all --enablerepo='*'
 
 # - In order to drop the root user, we have to make some directories world
 #   writable as OpenShift default security model is to run the container
@@ -81,6 +80,6 @@ RUN chown -R ${USER}:0 ${APP_ROOT} && \
   fix-permissions ${APP_ROOT} -P && \
   rpm-file-permissions
 
-ENV PYTHONPATH=${APP_ROOT}/.local/lib64/python3.8/site-packages
-
 USER ${USER}
+
+RUN python3 -m pip install --upgrade --user pip wheel && find ${APP_ROOT}/.local -type d -exec chmod 0755 {} \;
