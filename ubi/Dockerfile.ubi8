@@ -28,7 +28,7 @@ ENV \
   PLATFORM="el8"
 
 # Copy extra files to the image.
-COPY  --chown=${USER} ./root/ /
+COPY  ./root/ /
 
 # Reset permissions of modified directories and add default user
 RUN rpm-file-permissions && \
