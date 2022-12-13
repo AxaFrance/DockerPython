@@ -61,9 +61,7 @@ ENV LC_IDENTIFICATION C.utf8
 ENV LC_ALL C.utf8
 
 # Copy extra files to the image.
-COPY ./root/ /
-
-USER ${USER}
+COPY  --chown=${USER} ./root/ /
 
 # Reset permissions of modified directories and add default user
 RUN rpm-file-permissions && \
