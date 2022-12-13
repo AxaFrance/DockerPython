@@ -71,7 +71,7 @@ jobs:
         
   build_tesseract_image:
     environment: MLOpsPython
-    needs: tags,build_python_image
+    needs: [tags,build_python_image]
     runs-on: ubuntu-latest
     
     steps:
