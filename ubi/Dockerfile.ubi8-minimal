@@ -1,0 +1,79 @@
+ARG baseImage
+FROM ${baseImage}
+
+#### Labels
+## target : define the image purpose
+## alm_base / alm_build / alm_release => AzureDevOps agents
+## os => base os image
+## build => stack build image
+## runtime => stack runtime
+LABEL target="os"
+## stack : define the stack (ex python, tomcat, alm, ...)
+LABEL stack="ubi"
+## os : define the os
+LABEL os="linux"
+## description 
+LABEL description="ubi os image"
+#### Envs
+## specific
+
+ENV \
+  APP_ROOT=/opt/app-root \
+  # The $HOME is not set by default, but some applications needs this variable
+  HOME=/opt/app-root \
+  PATH=/opt/app-root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+  USER=1001 \
+  PLATFORM="el8"
+
+RUN INSTALL_PKGS="shadow-utils findutils openssl gettext" && \
+  mkdir -p ${HOME}/.pki/nssdb && \
+  chown -R ${USER}:0 ${HOME}/.pki && \
+  microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+  rpm -V $INSTALL_PKGS && \
+  microdnf -y clean all --enablerepo='*'
+  
+ENV LANG C.utf8
+ENV LC_CTYPE C.utf8
+ENV LC_NUMERIC C.utf8
+ENV LC_TIME C.utf8
+ENV LC_COLLATE C.utf8
+ENV LC_MONETARY C.utf8
+ENV LC_MESSAGES C.utf8
+ENV LC_PAPER C.utf8
+ENV LC_NAME C.utf8
+ENV LC_ADDRESS C.utf8
+ENV LC_TELEPHONE C.utf8
+ENV LC_MEASUREMENT C.utf8
+ENV LC_IDENTIFICATION C.utf8
+ENV LC_ALL C.utf8
+
+# Copy extra files to the image.
+COPY ./root/ /
+
+# Reset permissions of modified directories and add default user
+RUN rpm-file-permissions && \
+  useradd -u ${USER} -r -g 0 -d ${HOME} -s /sbin/nologin \
+  -c "Default Application User" default && \
+  mkdir -p ${APP_ROOT} && \
+  chown -R ${USER}:0 ${APP_ROOT}
+
+WORKDIR ${APP_ROOT}
+
+ENV ROOT_CERTIFICATE_PATH ${HOME}/certificates
+COPY certificates/ $ROOT_CERTIFICATE_PATH/
+
+# include Axa certificates in ca-certificates.crt
+# all valid .crt certificates under are implicitly added by update-ca-certificates
+# certficates needs to converted from binary format with
+# openssl x509 -inform DER -in YOUR_CERTIFICATE.cer -out YOUR_CERTIFICATE.crt
+RUN openssl x509 -inform DER -in $ROOT_CERTIFICATE_PATH/AXA-Enterprise-Root-CA.cer -out /etc/pki/ca-trust/source/anchors/AXA-Enterprise-Root-CA.crt && \
+  openssl x509 -inform DER -in $ROOT_CERTIFICATE_PATH/AXA-Issuing-CA-PR1.cer -out /etc/pki/ca-trust/source/anchors/AXA-Issuing-CA-PR1.crt && \
+  openssl x509 -inform DER -in $ROOT_CERTIFICATE_PATH/AXA-Issuing-CA-PR3.cer -out /etc/pki/ca-trust/source/anchors/AXA-Issuing-CA-PR3.crt && \
+  openssl x509 -inform DER -in $ROOT_CERTIFICATE_PATH/AXA-Issuing-CA-PR4.cer -out /etc/pki/ca-trust/source/anchors/AXA-Issuing-CA-PR4.crt && \
+  openssl x509 -inform DER -in $ROOT_CERTIFICATE_PATH/AXA-Issuing-CA-PR5.cer -out /etc/pki/ca-trust/source/anchors/AXA-Issuing-CA-PR5.crt && \
+  /bin/update-ca-trust && \
+  openssl crl2pkcs7 -nocrl -certfile /etc/pki/tls/certs/ca-bundle.crt | openssl pkcs7 -print_certs | grep subject | head
+
+# dynatrace
+ENV DYNATRACE_INSTALL_PATH ${APP_ROOT}/dynatrace
+ENV INSTALL_PATH ${DYNATRACE_INSTALL_PATH}
