@@ -45,7 +45,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
-        images: axaguildev/mlopspython
+        images: axaguildev/build-ubi8-python3.8
 
     - name: Build and push Docker image
       if: github.ref == 'refs/heads/main'
@@ -55,7 +55,7 @@ jobs:
         file : "./ubi/Dockerfile.ubi8"
         build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
         push: true
-        tags: axaguildev/mlopspython:${{ needs.tags.outputs.new_version }},axaguildev/mlopspython:latest
+        tags: axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8-python3.8:latest
         labels: ${{ steps.meta.outputs.labels }}
 
     - name: Build and push Docker image
