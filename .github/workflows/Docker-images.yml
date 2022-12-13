@@ -52,7 +52,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: ./ubi
-        file : "./ubi/Dockerfile.ubi8"
+        file : "./Dockerfile.ubi8"
         build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
         push: true
         tags: axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8-python3.8:latest
@@ -63,7 +63,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: ./ubi
-        file : "./ubi/Dockerfile.ubi8"
+        file : "./Dockerfile.ubi8"
         build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
         push: true
         tags: ${{ steps.meta.outputs.tags }}
