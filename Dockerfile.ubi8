@@ -65,7 +65,8 @@ ENV LC_ALL C.utf8
 COPY ./root/ /
 
 # Reset permissions of modified directories and add default user
-RUN chmod +x /usr/bin/rpm-file-permissions && rpm-file-permissions && \
+RUN chmod +x /usr/bin/rpm-file-permissions && \
+  rpm-file-permissions && \
   useradd -u ${USER} -r -g 0 -d ${HOME} -s /sbin/nologin \
   -c "Default Application User" default && \
   chown -R ${USER}:0 ${APP_ROOT}
@@ -82,8 +83,8 @@ RUN INSTALL_PKGS="python38 python38-devel python38-setuptools python38-pip gcc d
 # - In order to drop the root user, we have to make some directories world
 #   writable as OpenShift default security model is to run the container
 #   under random UID.
-RUN chmod +x /usr/bin/fix-permissions &&  \ 
-  chown -R ${USER}:0 ${APP_ROOT} && \
+RUN chown -R ${USER}:0 ${APP_ROOT} && \
+  chmod +x /usr/bin/fix-permissions &&  \ 
   fix-permissions ${APP_ROOT} -P && \
   rpm-file-permissions
 
