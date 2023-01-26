@@ -23,11 +23,11 @@ jobs:
       - name: Add tag to output step for main branch
         id: tag_main
         if: github.ref == 'refs/heads/main'
-        run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
+        run: echo "new_version=${{ steps.tag_version.outputs.new_version }}" >> $GITHUB_OUTPUT
       - name: Add tag to output step for pull request
         id: tag_pr
         if: github.ref != 'refs/heads/main'
-        run: echo "::set-output name=new_version::pr-${{ github.event.number }}"
+        run:  echo "new_version=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
 
   build_ubi8_image:
     needs: tags
