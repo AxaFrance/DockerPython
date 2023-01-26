@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8"
-      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_version: pr-${{ github.event.number }}
       image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
       image_context: ./ubi
       image_file: "./Dockerfile.ubi8"
