@@ -60,7 +60,7 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.8"
-      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_version: pr-${{ github.event.number }} 
       image_build_args: "baseImage=axaguildev/build-ubi8:pr-${{ github.event.number }}"
       image_context: ./build/Python38
       image_file: "./build/Python38/Dockerfile.ubi8"
@@ -73,7 +73,7 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/runtime-ubi8-python3.8"
-      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_version: pr-${{ github.event.number }} 
       image_build_args: "baseImage=axaguildev/runtime-ubi8:pr-${{ github.event.number }}"
       image_context: ./runtime/Python38
       image_file: "./runtime/Python38/Dockerfile.ubi8"
@@ -86,8 +86,8 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.10"
-      image_version: ${{ needs.tags.outputs.new_version }}  
-      image_build_args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_version: pr-${{ github.event.number }} 
+      image_build_args: "baseImage=axaguildev/build-ubi8:pr-${{ github.event.number }} "
       image_context: ./build/Python310
       image_file: "./build/Python310/Dockerfile.ubi8"
     secrets:
@@ -99,8 +99,8 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/runtime-ubi8-python3.10"
-      image_version: ${{ needs.tags.outputs.new_version }}  
-      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_version: pr-${{ github.event.number }} 
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:pr-${{ github.event.number }} "
       image_context: ./runtime/Python310
       image_file: "./runtime/Python310/Dockerfile.ubi8"
     secrets:
@@ -112,8 +112,8 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.8-tesseract"
-      image_version: ${{ needs.tags.outputs.new_version }}  
-      image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
+      image_version: pr-${{ github.event.number }} 
+      image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:pr-${{ github.event.number }} 
       image_context: ./build/Python310
       image_file: "./build/Python310/Dockerfile.ubi8"
     secrets:
