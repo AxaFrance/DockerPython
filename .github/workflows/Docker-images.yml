@@ -25,7 +25,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
 
-  build_ubi_image:
+  build_ubi8_image:
     environment: MLOpsPython
     needs: tags
     runs-on: ubuntu-latest
@@ -71,7 +71,7 @@ jobs:
 
   build_python_image:
     environment: MLOpsPython
-    needs: tags
+    needs: [tags,build_ubi8_image]
     runs-on: ubuntu-latest
     
     steps:
