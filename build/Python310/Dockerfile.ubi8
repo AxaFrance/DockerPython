@@ -49,6 +49,7 @@ RUN ldconfig ${PYTHON_DIR}/lib
 #   writable as OpenShift default security model is to run the container
 #   under random UID.
 RUN chown -R ${USER}:0 ${APP_ROOT} && \
+  chmod +x /usr/bin/fix-permissions &&  \ 
   fix-permissions ${APP_ROOT} -P && \
   rpm-file-permissions
 
