@@ -66,7 +66,7 @@ jobs:
         file : "./Dockerfile.ubi8"
         build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: axaguildev/build-ubi8:pr-${{ github.event.number }}
         labels: ${{ steps.meta.outputs.labels }}
 
   build_python_image:
@@ -110,7 +110,7 @@ jobs:
         file : "./build/Python38/Dockerfile.ubi8"
         build-args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }}"
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: axaguildev/build-ubi8-python3.8:pr-${{ github.event.number }}
         labels: ${{ steps.meta.outputs.labels }}
         
   build_tesseract_image:
@@ -154,5 +154,5 @@ jobs:
         file : "./Dockerfile.ubi8-tesseract"
         build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: axaguildev/build-ubi8-python3.8-tesseract:${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
