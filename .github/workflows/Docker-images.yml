@@ -108,7 +108,7 @@ jobs:
       with:
         context: ./build/Python38
         file : "./build/Python38/Dockerfile.ubi8"
-        build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
+        build-args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }}"
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

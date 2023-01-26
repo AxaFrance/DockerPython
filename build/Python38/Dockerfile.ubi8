@@ -1,10 +1,6 @@
 ARG baseImage
 FROM ${baseImage}
 
-
-WORKDIR ${APP_ROOT}
-
-
 RUN INSTALL_PKGS="python38 python38-devel python38-setuptools python38-pip gcc diffutils file make gcc-c++ cmake git" && \
   dnf -y module enable python38:3.8 && \
   dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
