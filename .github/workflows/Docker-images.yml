@@ -47,8 +47,8 @@ jobs:
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/runtime-ubi8"
-      image_version: ${{ needs.tags.outputs.new_version }}  
-      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_version: pr-${{ github.event.number }} 
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:pr-${{ github.event.number }}"
       image_context: ./ubi
       image_file: "./Dockerfile.ubi8-minimal"
     secrets:
