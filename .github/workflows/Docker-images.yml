@@ -28,12 +28,12 @@ jobs:
   build_ubi8_image:
     needs: tags
     uses: AxaGuilDEv/DockerPython/.github/actions/Docker.yml@feature/addimages
-      with:
-        image_name: "axaguildev/build-ubi8"
-        image_version: ${{ needs.tags.outputs.new_version }}
-        image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
-        image_context: ./ubi
-        image_file: "./Dockerfile.ubi8"
+    with:
+      image_name: "axaguildev/build-ubi8"
+      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi8"
   #build_ubi8_image:
   #  environment: MLOpsPython
   #  
