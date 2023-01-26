@@ -18,15 +18,16 @@ on:
       image_file:
         required: true
         type: string
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
+    #secrets:
+    #  DOCKER_USERNAME:
+    #    required: true
+    #  DOCKER_PASSWORD:
+    #    required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: MLOpsPython
     
     steps:
     - uses: actions/checkout@v3

@@ -26,48 +26,60 @@ jobs:
         run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
 
   build_ubi8_image:
-    environment: MLOpsPython
     needs: tags
     runs-on: ubuntu-latest
-    
+    environment: production
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v2
-      with:
-        images: axaguildev/build-ubi8
-
-    - name: Build and push Docker image
-      if: github.ref == 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8"
-        build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
-        push: true
-        tags: axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8:latest
-        labels: ${{ steps.meta.outputs.labels }}
-
-    - name: Build and push Docker image
-      if: github.ref != 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8"
-        build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
-        push: true
-        tags: axaguildev/build-ubi8:pr-${{ github.event.number }}
-        labels: ${{ steps.meta.outputs.labels }}
+      - uses: ./.github/actions/Docker-build.yml
+        with:
+          image_name: "axaguildev/build-ubi8"
+          image_version: ${{ needs.tags.outputs.new_version }}
+          image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
+          image_context: ./ubi
+          image_file: "./Dockerfile.ubi8"
+  #build_ubi8_image:
+  #  environment: MLOpsPython
+  #  
+  #  runs-on: ubuntu-latest
+  #  
+  #  steps:   
+  #  - uses: actions/checkout@v3
+  #    with:
+  #      fetch-depth: 0
+#
+  #  - name: Log in to Docker Hub
+  #    uses: docker/login-action@v2
+  #    with:
+  #      username: ${{ secrets.DOCKER_USERNAME }}
+  #      password: ${{ secrets.DOCKER_PASSWORD }}
+#
+  #  - name: Extract metadata (tags, labels) for Docker
+  #    id: meta
+  #    uses: docker/metadata-action@v2
+  #    with:
+  #      images: axaguildev/build-ubi8
+#
+  #  - name: Build and push Docker image
+  #    if: github.ref == 'refs/heads/main'
+  #    uses: docker/build-push-action@v3
+  #    with:
+  #      context: ./ubi
+  #      file : "./Dockerfile.ubi8"
+  #      
+  #      push: true
+  #      tags: axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8:latest
+  #      labels: ${{ steps.meta.outputs.labels }}
+#
+  #  - name: Build and push Docker image
+  #    if: github.ref != 'refs/heads/main'
+  #    uses: docker/build-push-action@v3
+  #    with:
+  #      context: ./ubi
+  #      file : "./Dockerfile.ubi8"
+  #      build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
+  #      push: true
+  #      tags: axaguildev/build-ubi8:pr-${{ github.event.number }}
+  #      labels: ${{ steps.meta.outputs.labels }}
 
   build_python38_image:
     environment: MLOpsPython
