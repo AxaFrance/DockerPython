@@ -26,7 +26,7 @@ jobs:
         run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
       - name: Add tag to output step for pull request
         id: tag_pr
-        if: github.ref !== 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         run: echo "::set-output name=new_version::pr-${{ github.event.number }}"
 
   ubi8_image:
@@ -42,7 +42,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  python38_image:
+  build_python38_image:
     needs: [tags,ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
@@ -55,7 +55,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  python310_image:
+  build_python310_image:
     needs: [tags,ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
@@ -69,7 +69,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   python38_tesseract_image:
-    needs: [tags,ubi8_image,python38_image]
+    needs: [tags,ubi8_image,build_python38_image]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.8-tesseract"
