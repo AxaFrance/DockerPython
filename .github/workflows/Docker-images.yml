@@ -35,6 +35,7 @@ jobs:
       image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
       image_context: ./ubi
       image_file: "./Dockerfile.ubi8"
+    secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   #build_ubi8_image:
