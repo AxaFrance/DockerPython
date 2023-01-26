@@ -27,6 +27,7 @@ jobs:
 
   build_ubi8_image:
     needs: tags
+    environment: MLOpsPython
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8"
