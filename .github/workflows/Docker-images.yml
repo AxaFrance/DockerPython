@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: .github/actions/Docker-build.yml
+      - uses: /.github/actions/Docker-build.yml
         with:
           image_name: "axaguildev/build-ubi8"
           image_version: ${{ needs.tags.outputs.new_version }}
