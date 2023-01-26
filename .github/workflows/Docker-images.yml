@@ -27,7 +27,7 @@ jobs:
 
   build_ubi8_image:
     needs: tags
-    uses: ./.github/actions/docker.yml
+    uses: AxaGuilDEv/DockerPython/.github/actions/docker.yml@feature/addimages
     with:
       image_name: "axaguildev/build-ubi8"
       image_version: ${{ needs.tags.outputs.new_version }}  
