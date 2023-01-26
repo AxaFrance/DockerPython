@@ -34,7 +34,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: /.github/actions/Docker-build.yml@feature/addimages
+      - uses: AxaGuilDEv/DockerPython/.github/actions/Docker-build.yml@feature/addimages
         with:
           image_name: "axaguildev/build-ubi8"
           image_version: ${{ needs.tags.outputs.new_version }}
