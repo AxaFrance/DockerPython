@@ -27,7 +27,7 @@ jobs:
 
   build_ubi8_image:
     needs: tags
-    uses: ./.github/workflows/docker.yml
+    uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8"
       image_version: ${{ needs.tags.outputs.new_version }}  
