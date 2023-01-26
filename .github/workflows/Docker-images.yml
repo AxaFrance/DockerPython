@@ -108,7 +108,7 @@ jobs:
       with:
         context: ./build/Python38
         file : "./build/Python38/Dockerfile.ubi8"
-        build-args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }}"
+        build-args: "baseImage=axaguildev/build-ubi8:pr-${{ github.event.number }}"
         push: true
         tags: axaguildev/build-ubi8-python3.8:pr-${{ github.event.number }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -152,7 +152,7 @@ jobs:
       with:
         context: ./ubi
         file : "./Dockerfile.ubi8-tesseract"
-        build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
+        build-args: "baseImage=axaguildev/build-ubi8-python3.8:pr-${{ github.event.number }}"
         push: true
-        tags: axaguildev/build-ubi8-python3.8-tesseract:${{ steps.meta.outputs.tags }}
+        tags: axaguildev/build-ubi8-python3.8-tesseract:pr-${{ github.event.number }}
         labels: ${{ steps.meta.outputs.labels }}
