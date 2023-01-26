@@ -29,7 +29,7 @@ jobs:
         if: github.ref != 'refs/heads/main'
         run: echo "::set-output name=new_version::pr-${{ github.event.number }}"
 
-  ubi8_image:
+  build_ubi8_image:
     needs: tags
     uses: ./.github/workflows/Docker.yml
     with:
@@ -42,8 +42,21 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  runtime_ubi8_image:
+    needs: tags
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8"
+      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi8-minimal"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
   build_python38_image:
-    needs: [tags,ubi8_image]
+    needs: [tags,build_ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.8"
@@ -55,8 +68,21 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  runtime_python38_image:
+    needs: [tags,runtime_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8-python3.8"
+      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python38
+      image_file: "./runtime/Python38/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
   build_python310_image:
-    needs: [tags,ubi8_image]
+    needs: [tags,build_ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.10"
@@ -68,8 +94,21 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  python38_tesseract_image:
-    needs: [tags,ubi8_image,build_python38_image]
+  runtime_python310_image:
+    needs: [tags,runtime_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8-python3.10"
+      image_version: ${{ needs.tags.outputs.new_version }}  
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python310
+      image_file: "./runtime/Python310/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  build_python38_tesseract_image:
+    needs: [tags,build_ubi8_image,build_python38_image]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi8-python3.8-tesseract"
