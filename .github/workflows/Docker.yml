@@ -65,5 +65,5 @@ jobs:
         file : ${{ inputs.image_file }}
         build-args: ${{ inputs.image_build_args }}
         push: true
-        tags: ${{ inputs.image_name }}:pr-${{ github.event.number }}
+        tags: ${{ inputs.image_name }}:${{ needs.tags.outputs.new_version }}
         labels: ${{ steps.meta.outputs.labels }}
