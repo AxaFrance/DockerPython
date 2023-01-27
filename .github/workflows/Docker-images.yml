@@ -22,7 +22,7 @@ jobs:
           dry_run: true
           github_token: ${{ secrets.GITHUB_TOKEN  }}
       - name: Add tag to output step for main branch
-        id: tag_main
+        id: tag
         #if: github.ref == 'refs/heads/main'
         run: echo "new_version=${{ steps.tag_version.outputs.new_version }}" >> $GITHUB_OUTPUT
       #- name: Add tag to output step for pull request
