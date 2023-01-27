@@ -31,6 +31,7 @@ jobs:
       #  run:  echo "new_version=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
 
   calver:
+    runs-on: ubuntu-latest
     needs: tags
     name: Create CalVer tag
     steps:
