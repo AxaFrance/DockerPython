@@ -114,8 +114,8 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     with:
-      image_context: ./build/Python310
-      image_file: "./build/Python310/Dockerfile.ubi8"
+      image_context: ./ubi
+      image_file : "./Dockerfile.ubi8-tesseract"
       image_name: "axaguildev/build-ubi8-python3.8-tesseract"
       image_version: ${{ needs.tags.outputs.new_version }} 
       image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
