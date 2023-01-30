@@ -100,7 +100,7 @@ jobs:
     with:
       image_name: "axaguildev/runtime-ubi8-python3.10"
       image_version: ${{ needs.tags.outputs.new_version }} 
-      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }} "
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
       image_context: ./runtime/Python310
       image_file: "./runtime/Python310/Dockerfile.ubi8"
     secrets:
@@ -118,4 +118,4 @@ jobs:
       image_file: "./build/Python310/Dockerfile.ubi8"
       image_name: "axaguildev/build-ubi8-python3.8-tesseract"
       image_version: ${{ needs.tags.outputs.new_version }} 
-      image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }} 
+      image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
