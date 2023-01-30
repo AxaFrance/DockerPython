@@ -20,95 +20,102 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN  }}
-      - name: Add tag to output step
+      - name: Add tag to output step for main branch
         id: tag
-        if: github.ref == 'refs/heads/main'
-        run: echo "::set-output name=new_version::${{ steps.tag_version.outputs.new_version }}"
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/main' ]; then
+            echo "new_version=${{ steps.tag_version.outputs.new_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "new_version=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
+          fi
 
-  build_python_image:
-    environment: MLOpsPython
+  build_ubi8_image:
     needs: tags
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi8"
+      image_version: "${{ needs.tags.outputs.new_version }}"
+      image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+  runtime_ubi8_image:
+    needs: tags
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=registry.access.redhat.com/ubi8/ubi-minimal:latest"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi8-minimal"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v2
-      with:
-        images: axaguildev/build-ubi8-python3.8
+  build_python38_image:
+    needs: [tags,build_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi8-python3.8"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./build/Python38
+      image_file: "./build/Python38/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      if: github.ref == 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8"
-        build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
-        push: true
-        tags: axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8-python3.8:latest
-        labels: ${{ steps.meta.outputs.labels }}
+  runtime_python38_image:
+    needs: [tags,runtime_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8-python3.8"
+      image_version: ${{ needs.tags.outputs.new_version }} 
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python38
+      image_file: "./runtime/Python38/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      if: github.ref != 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8"
-        build-args: "baseImage=registry.access.redhat.com/ubi8/ubi:latest"
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        
-  build_tesseract_image:
-    environment: MLOpsPython
-    needs: [tags,build_python_image]
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+  build_python310_image:
+    needs: [tags,build_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi8-python3.10"
+      image_version: ${{ needs.tags.outputs.new_version }} 
+      image_build_args: "baseImage=axaguildev/build-ubi8:${{ needs.tags.outputs.new_version }} "
+      image_context: ./build/Python310
+      image_file: "./build/Python310/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+  runtime_python310_image:
+    needs: [tags,runtime_ubi8_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi8-python3.10"
+      image_version: ${{ needs.tags.outputs.new_version }} 
+      image_build_args: "baseImage=axaguildev/runtime-ubi8:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python310
+      image_file: "./runtime/Python310/Dockerfile.ubi8"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v2
-      with:
-        images: axaguildev/build-ubi8-python3.8-tesseract
-
-    - name: Build and push Docker image
-      if: github.ref == 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8-tesseract"
-        build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
-        push: true
-        tags: axaguildev/build-ubi8-python3.8-tesseract:${{ needs.tags.outputs.new_version }},axaguildev/build-ubi8-python3.8-tesseract:latest
-        labels: ${{ steps.meta.outputs.labels }}
-
-    - name: Build and push Docker image
-      if: github.ref != 'refs/heads/main'
-      uses: docker/build-push-action@v3
-      with:
-        context: ./ubi
-        file : "./Dockerfile.ubi8-tesseract"
-        build-args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+  build_python38_tesseract_image:
+    needs: [tags,build_ubi8_image,build_python38_image]
+    uses: ./.github/workflows/Docker.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      image_context: ./ubi
+      image_file : "./Dockerfile.ubi8-tesseract"
+      image_name: "axaguildev/build-ubi8-python3.8-tesseract"
+      image_version: ${{ needs.tags.outputs.new_version }} 
+      image_build_args: "baseImage=axaguildev/build-ubi8-python3.8:${{ needs.tags.outputs.new_version }}"

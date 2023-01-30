@@ -1,12 +1,21 @@
 ARG baseImage
 FROM ${baseImage}
 
-
-
+#### Labels
+## target : define the image purpose
+## alm_base / alm_build / alm_release => AzureDevOps agents
+## os => base os image
+## build => stack build image
+## runtime => stack runtime
 LABEL target="os"
+## stack : define the stack (ex python, tomcat, alm, ...)
 LABEL stack="ubi"
+## os : define the os
 LABEL os="linux"
+## description 
 LABEL description="ubi os image"
+#### Envs
+## specific
 
 ENV \
   APP_ROOT=/opt/app-root \
@@ -16,24 +25,13 @@ ENV \
   USER=1001 \
   PLATFORM="el8"
 
-RUN INSTALL_PKGS="bsdtar \
-  findutils \
-  groff-base \
-  glibc-locale-source \
-  glibc-langpack-en \
-  gettext \
-  rsync \
-  scl-utils \
-  tar \
-  unzip \
-  xz \
-  openssl" && \
+RUN INSTALL_PKGS="shadow-utils findutils openssl gettext" && \
   mkdir -p ${HOME}/.pki/nssdb && \
   chown -R ${USER}:0 ${HOME}/.pki && \
-  dnf install -y --setopt=tsflags=nodocs --noplugins $INSTALL_PKGS && \
+  microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
   rpm -V $INSTALL_PKGS && \
-  dnf -y clean all --enablerepo='*'
-
+  microdnf -y clean all --enablerepo='*'
+  
 ENV LANG C.utf8
 ENV LC_CTYPE C.utf8
 ENV LC_NUMERIC C.utf8
@@ -49,15 +47,14 @@ ENV LC_MEASUREMENT C.utf8
 ENV LC_IDENTIFICATION C.utf8
 ENV LC_ALL C.utf8
 
-#USER root
 # Copy extra files to the image.
 COPY ./root/ /
 
 # Reset permissions of modified directories and add default user
-RUN chmod +x /usr/bin/rpm-file-permissions && \
-  rpm-file-permissions && \
+RUN chmod +x /usr/bin/rpm-file-permissions && rpm-file-permissions && \
   useradd -u ${USER} -r -g 0 -d ${HOME} -s /sbin/nologin \
   -c "Default Application User" default && \
+  mkdir -p ${APP_ROOT} && \
   chown -R ${USER}:0 ${APP_ROOT}
 
 WORKDIR ${APP_ROOT}

@@ -1,0 +1,58 @@
+ARG baseImage
+FROM ${baseImage} as build
+
+ENV PYTHON_VERSION 3.10
+ENV PYTHON_PATCH_VERSION 4
+ENV ARCH amd64
+
+ENV PYTHON_DIR=/opt/python
+ENV PATH ${PYTHON_DIR}/bin:$PATH
+ENV LANG C.UTF-8
+
+WORKDIR ${HOME}
+
+RUN dnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget cmake git \
+  && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
+  && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
+  && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
+  && ./configure --prefix=${PYTHON_DIR} \
+  --build="$ARCH" \
+  --enable-loadable-sqlite-extensions \
+  --enable-optimizations \
+  --enable-option-checking=fatal \
+  --enable-shared \
+  --with-system-expat \
+  --with-system-ffi \
+  && make -j "$(nproc)" \
+  && make install \
+  && ldconfig ${PYTHON_DIR}/lib \
+  && find ${PYTHON_DIR} -depth \
+  \( \
+  \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+  -o \
+  \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+  \) -exec rm -rf '{}' + 
+
+FROM ${baseImage} as runtime
+
+ENV PYTHON_DIR=/opt/python
+ENV PATH ${PYTHON_DIR}/bin:$PATH
+ENV LANG C.UTF-8
+
+ENV PYTHON_VERSION 3.10
+ENV PYTHON_PATCH_VERSION 4
+
+COPY --from=build ${PYTHON_DIR} ${PYTHON_DIR}
+RUN ldconfig ${PYTHON_DIR}/lib
+
+# - In order to drop the root user, we have to make some directories world
+#   writable as OpenShift default security model is to run the container
+#   under random UID.
+RUN chown -R ${USER}:0 ${APP_ROOT} && \
+  chmod +x /usr/bin/fix-permissions &&  \ 
+  fix-permissions ${APP_ROOT} -P && \
+  rpm-file-permissions
+
+USER ${USER}
+
+RUN python3 -m pip install --upgrade --user pip wheel && find ${APP_ROOT}/.local -type d -exec chmod 0755 {} \;
