@@ -29,6 +29,32 @@ jobs:
             echo "new_version=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
           fi
 
+  build_ubi9_image:
+    needs: tags
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi9"
+      image_version: "${{ needs.tags.outputs.new_version }}"
+      image_build_args: "baseImage=registry.access.redhat.com/ubi9/ubi:latest"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  runtime_ubi9_image:
+    needs: tags
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi9"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=registry.access.redhat.com/ubi9/ubi-minimal:latest"
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi9-minimal"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
   build_ubi8_image:
     needs: tags
     uses: ./.github/workflows/Docker.yml
