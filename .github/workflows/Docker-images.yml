@@ -62,8 +62,21 @@ jobs:
       image_name: "axaguildev/build-ubi9-python3.10"
       image_version: ${{ needs.tags.outputs.new_version }}
       image_build_args: "baseImage=axaguildev/build-ubi9:${{ needs.tags.outputs.new_version }}"
-      image_context: ./build/Python10
-      image_file: "./build/Python10/Dockerfile.ubi9"
+      image_context: ./build/Python310
+      image_file: "./build/Python310/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  runtime_ubi9_python310_image:
+    needs: [tags,runtime_ubi9_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi9-python3.10"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/runtime-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python310
+      image_file: "./runtime/Python310/Dockerfile.ubi9"
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
