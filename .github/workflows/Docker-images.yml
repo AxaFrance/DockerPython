@@ -81,6 +81,46 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+
+  build_ubi9_python38_image:
+    needs: [ tags,build_ubi9_image ]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi9-python3.8"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/build-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./build/Python38
+      image_file: "./build/Python38/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  runtime_ubi9_python38_image:
+    needs: [tags,runtime_ubi9_image]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi9-python3.8"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/runtime-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./runtime/Python38
+      image_file: "./runtime/Python38/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  build_ubi9_python38_tesseract_image:
+    needs: [ tags,build_ubi9_image,build_ubi9_python38_image ]
+    uses: ./.github/workflows/Docker.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi9-tesseract"
+      image_name: "axaguildev/build-ubi9-python3.8-tesseract"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/build-ubi9-python3.8:${{ needs.tags.outputs.new_version }}"
+
   build_ubi9_python310_tesseract_image:
     needs: [ tags,build_ubi9_image,build_ubi9_python310_image ]
     uses: ./.github/workflows/Docker.yml
@@ -89,7 +129,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     with:
       image_context: ./ubi
-      image_file: "./Dockerfile.ubi8-tesseract"
+      image_file: "./Dockerfile.ubi9-tesseract"
       image_name: "axaguildev/build-ubi9-python3.10-tesseract"
       image_version: ${{ needs.tags.outputs.new_version }}
       image_build_args: "baseImage=axaguildev/build-ubi9-python3.10:${{ needs.tags.outputs.new_version }}"
