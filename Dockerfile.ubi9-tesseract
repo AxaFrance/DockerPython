@@ -3,7 +3,7 @@ FROM ${baseImage}
 
 USER root
 
-RUN INSTALL_PKGS="automake libtool libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel" && \
+RUN INSTALL_PKGS="automake libtool libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel devtoolset-7 llvm-toolset-7" && \
   dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
   rpm -V $INSTALL_PKGS && \
   dnf -y clean all --enablerepo='*'
