@@ -55,6 +55,33 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  build_ubi9_python10_image:
+    needs: [ tags,build_ubi8_image ]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi9-python3.10"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/build-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./build/Python10
+      image_file: "./build/Python10/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  build_ubi9_python310_tesseract_image:
+    needs: [ tags,build_ubi9_image,build_ubi9_python310_image ]
+    uses: ./.github/workflows/Docker.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      image_context: ./ubi
+      image_file: "./Dockerfile.ubi8-tesseract"
+      image_name: "axaguildev/build-ubi9-python3.10-tesseract"
+      image_version: ${{ needs.tags.outputs.new_version }}
+      image_build_args: "baseImage=axaguildev/build-ubi9-python3.10:${{ needs.tags.outputs.new_version }}"
+
+
   build_ubi8_image:
     needs: tags
     uses: ./.github/workflows/Docker.yml
@@ -81,7 +108,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  build_python38_image:
+  build_ubi8_python38_image:
     needs: [tags,build_ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
@@ -94,7 +121,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  runtime_python38_image:
+  runtime_ubi8_python38_image:
     needs: [tags,runtime_ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
@@ -120,7 +147,7 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  runtime_python310_image:
+  runtime_ubi8_python310_image:
     needs: [tags,runtime_ubi8_image]
     uses: ./.github/workflows/Docker.yml
     with:
@@ -133,8 +160,8 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  build_python38_tesseract_image:
-    needs: [tags,build_ubi8_image,build_python38_image]
+  build_ubi8_python38_tesseract_image:
+    needs: [tags,build_ubi8_image,build_ubi8_python38_image]
     uses: ./.github/workflows/Docker.yml
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
