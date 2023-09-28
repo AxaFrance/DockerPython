@@ -3,7 +3,7 @@ FROM ${baseImage}
 
 USER root
 
-RUN INSTALL_PKGS="automake libtool libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel devtoolset-7 llvm-toolset-7" && \
+RUN INSTALL_PKGS="automake libtool libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel" && \
   dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
   rpm -V $INSTALL_PKGS && \
   dnf -y clean all --enablerepo='*'
@@ -32,6 +32,6 @@ RUN curl -fsSL https://github.com/tesseract-ocr/tesseract/archive/${TESSERACT_VE
   tar xvfz ${TESSERACT_VERSION}.tar.gz && \
   cd tesseract-${TESSERACT_VERSION} && \
   ./autogen.sh && \
-  ./configure --enable-debug --prefix=${LOCAL} --with-extra-libraries=${LOCAL_LIB} --disable-openmp 'CXXFLAGS=-g -O2 -fno-math-errno -Wall -Wextra -Wpedantic' && \
+  ./configure--prefix=${LOCAL} --with-extra-libraries=${LOCAL_LIB} --disable-openmp 'CXXFLAGS=-g -O2 -fno-math-errno -Wall -Wextra -Wpedantic' && \
   make && \
   make install
