@@ -55,8 +55,8 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  build_ubi9_python10_image:
-    needs: [ tags,build_ubi8_image ]
+  build_ubi9_python310_image:
+    needs: [ tags,build_ubi9_image ]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi9-python3.10"
