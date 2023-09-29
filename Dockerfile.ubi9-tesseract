@@ -32,6 +32,6 @@ RUN curl -fsSL https://github.com/tesseract-ocr/tesseract/archive/${TESSERACT_VE
   tar xvfz ${TESSERACT_VERSION}.tar.gz && \
   cd tesseract-${TESSERACT_VERSION} && \
   ./autogen.sh && \
-  ./configure--prefix=${LOCAL} --with-extra-libraries=${LOCAL_LIB} --disable-openmp 'CXXFLAGS=-g -O2 -fno-math-errno -Wall -Wextra -Wpedantic' && \
+  ./configure --prefix=${LOCAL} --with-extra-libraries=${LOCAL_LIB} --disable-openmp 'CXXFLAGS=-g -O2 -fno-math-errno -Wall -Wextra -Wpedantic' && \
   make && \
   make install
