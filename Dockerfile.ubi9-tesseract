@@ -2,11 +2,11 @@ ARG baseImage
 FROM ${baseImage}
 
 USER root
-RUN dnf install -y --setopt=tsflags=nodocs tar freetype-devel freetype gcc openssl-devel bzip2-devel libffi-devel expat-devel make diffutils file gcc-c++ wget cmake git zlib-devel sqlite-devel automake libtool libjpeg-turbo-devel libwebp-devel libtiff-devel libpng-devel zlib-devel
-#RUN INSTALL_PKGS="automake libtool libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel" && \
-#  dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
-#  rpm -V $INSTALL_PKGS && \
-#  dnf -y clean all --enablerepo='*'
+#RUN dnf install -y --setopt=tsflags=nodocs tar freetype-devel freetype gcc openssl-devel bzip2-devel libffi-devel expat-devel make diffutils file gcc-c++ wget cmake git zlib-devel sqlite-devel automake libtool libjpeg-turbo-devel libwebp-devel libtiff-devel libpng-devel zlib-devel
+RUN INSTALL_PKGS="automake libtool gcc gcc-c++ cmake libjpeg-turbo-devel zlib-devel libwebp-devel libtiff-devel libpng-devel" && \
+  dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+  rpm -V $INSTALL_PKGS && \
+  dnf -y clean all --enablerepo='*'
 
 USER ${USER}
 
