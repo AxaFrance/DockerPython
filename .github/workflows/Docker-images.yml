@@ -61,7 +61,7 @@ jobs:
     with:
       image_name: "axaguildev/runtime-ubi9-nginx"
       image_version: "${{ needs.tags.outputs.new_version }}"
-      image_build_args: "baseImage=docker.io/nginx:1.25-bookworm"
+      image_build_args: "baseImage=axaguildev/runtime-ubi9:${{ needs.tags.outputs.new_version }}"
       image_context: ./ubi
       image_file: "./runtime/nginx/Dockerfile.ubi9"
     secrets:
