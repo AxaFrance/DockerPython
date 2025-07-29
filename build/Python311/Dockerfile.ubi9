@@ -12,7 +12,7 @@ ENV LANG C.UTF-8
 WORKDIR ${HOME}
 
 
-RUN microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel ncurses-devel xz xz-devel \
+RUN dnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget cmake git zlib-devel sqlite-devel ncurses-devel \
   && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
