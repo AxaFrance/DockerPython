@@ -41,6 +41,32 @@ jobs:
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  
+  build_ubi9_node20_image:
+    needs: [ tags, build_ubi9_image ]
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/build-ubi9-node20"
+      image_version: "${{ needs.tags.outputs.new_version }}"
+      image_build_args: "baseImage=axaguildev/build-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./ubi
+      image_file: "./build/node20/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  runtime_ubi9_nginx_image:
+    needs: tags
+    uses: ./.github/workflows/Docker.yml
+    with:
+      image_name: "axaguildev/runtime-ubi9-nginx"
+      image_version: "${{ needs.tags.outputs.new_version }}"
+      image_build_args: "baseImage=axaguildev/runtime-ubi9:${{ needs.tags.outputs.new_version }}"
+      image_context: ./ubi
+      image_file: "./runtime/nginx/Dockerfile.ubi9"
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   runtime_ubi9_image:
     needs: tags
@@ -56,7 +82,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   build_ubi9_python311_image:
-    needs: [ tags,build_ubi9_image ]
+    needs: [ tags, build_ubi9_image ]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/build-ubi9-python3.11"
