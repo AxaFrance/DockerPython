@@ -2,7 +2,7 @@ ARG baseImage
 FROM ${baseImage} as build
 
 ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 9
+ENV PYTHON_PATCH_VERSION 13
 ENV ARCH amd64
 
 ENV PYTHON_DIR=/opt/python
@@ -11,7 +11,8 @@ ENV LANG C.UTF-8
 
 WORKDIR ${HOME}
 
-RUN dnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make diffutils file gcc-c++ wget cmake git zlib-devel sqlite-devel \
+
+RUN microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel ncurses-devel xz xz-devel \
   && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
@@ -40,9 +41,10 @@ ENV PATH ${PYTHON_DIR}/bin:$PATH
 ENV LANG C.UTF-8
 
 ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 9
+ENV PYTHON_PATCH_VERSION 13
 
 COPY --from=build ${PYTHON_DIR} ${PYTHON_DIR}
+ENV LD_LIBRARY_PATH ${PYTHON_DIR}/lib:{LD_LIBRARY_PATH}
 RUN ldconfig ${PYTHON_DIR}/lib
 
 # - In order to drop the root user, we have to make some directories world

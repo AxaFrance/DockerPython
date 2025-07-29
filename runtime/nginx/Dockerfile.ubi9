@@ -1,5 +1,4 @@
 ARG baseImage
-ARG dynatrace
 
 FROM ${baseImage}
 
