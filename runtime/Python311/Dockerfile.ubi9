@@ -3,7 +3,7 @@ ARG baseImage
 FROM ${baseImage} as build
 
 ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 9
+ENV PYTHON_PATCH_VERSION 13
 ENV ARCH amd64
 
 ENV PYTHON_DIR=/opt/python
@@ -12,7 +12,7 @@ ENV LANG C.UTF-8
 
 WORKDIR ${HOME}
 
-RUN microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel \
+RUN microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel ncurses-devel xz xz-devel \
   && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
@@ -41,7 +41,7 @@ ENV PATH ${PYTHON_DIR}/bin:$PATH
 ENV LANG C.UTF-8
 
 ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 9
+ENV PYTHON_PATCH_VERSION 13
 
 RUN INSTALL_PKGS="expat" && \
   microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
@@ -49,6 +49,7 @@ RUN INSTALL_PKGS="expat" && \
   microdnf -y clean all --enablerepo='*'
 
 COPY --from=build ${PYTHON_DIR} ${PYTHON_DIR}
+ENV LD_LIBRARY_PATH ${PYTHON_DIR}/lib:{LD_LIBRARY_PATH}
 RUN ldconfig ${PYTHON_DIR}/lib
 
 # - In order to drop the root user, we have to make some directories world
@@ -59,7 +60,6 @@ RUN chown -R ${USER}:0 ${APP_ROOT} && \
   fix-permissions ${APP_ROOT} -P && \
   rpm-file-permissions
 
-ENV PYTHONPATH=${PYTHON_DIR}/.local/lib64/python3.8/site-packages
-
+ENV PYTHONPATH=${PYTHON_DIR}/lib/python3.11/site-packages
 
 USER ${USER}
