@@ -56,7 +56,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   runtime_ubi9_nginx_image:
-    needs: tags
+    needs: [ tags, runtime_ubi9_image ]
     uses: ./.github/workflows/Docker.yml
     with:
       image_name: "axaguildev/runtime-ubi9-nginx"
