@@ -1,0 +1,22 @@
+ARG baseImage
+ARG dynatrace
+
+FROM ${baseImage}
+
+RUN microdnf install nginx -y && \
+    sed -i '/^user/d' /etc/nginx/nginx.conf && \
+    sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/nginx.conf && \
+    sed -i 's/listen       \[::\]:80;/listen       \[::\]:8080;/g' /etc/nginx/nginx.conf && \
+    sed -i 's/root         \/usr\/share\/nginx\/html;/root         \/opt\/app-root\/html;/g' /etc/nginx/nginx.conf && \
+    mkdir /opt/app-root/html && \
+    cp -Lr /usr/share/nginx/html/* /opt/app-root/html/ && \
+    chmod 755 /var/log/nginx && \
+    chmod -R 775 /var/lib/nginx && \
+    ln -s /dev/stdout /var/log/nginx/access.log && \
+    ln -s /dev/stderr /var/log/nginx/error.log
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+
+# Penser à monter /var/lib/nginx/tmp et /run en emptyDir
