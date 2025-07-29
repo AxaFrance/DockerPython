@@ -8,11 +8,6 @@ RUN dnf -y module enable nodejs:20 && \
   dnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
   dnf -y clean all --enablerepo='*'
 
-# Set node configuration
-RUN cp /opt/configurations/.npmrc ~/
-RUN mkdir -p /usr/local/npm/etc/ && cp /opt/configurations/npmrc /usr/local/npm/etc/
-RUN npm install -g yarn
-
 # - In order to drop the root user, we have to make some directories world
 #   writable as OpenShift default security model is to run the container
 #   under random UID.
