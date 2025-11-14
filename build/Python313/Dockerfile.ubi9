@@ -1,48 +1,46 @@
 ARG baseImage
 FROM ${baseImage} as build
 
-ENV PYTHON_VERSION 3.13
-ENV PYTHON_PATCH_VERSION 8
-ENV ARCH amd64
+ENV PYTHON_VERSION=3.13
+ENV PYTHON_PATCH_VERSION=8
 
 ENV PYTHON_DIR=/opt/python
-ENV PATH ${PYTHON_DIR}/bin:$PATH
-ENV LANG C.UTF-8
+ENV PATH=${PYTHON_DIR}/bin:$PATH
+ENV LANG=C.UTF-8
 
 WORKDIR ${HOME}
 
-RUN dnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget cmake git zlib-devel sqlite-devel ncurses-devel \
+RUN dnf install -y --setopt=tsflags=nodocs \
+      gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget cmake git \
+      zlib-devel sqlite-devel ncurses-devel \
   && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
   && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
   && ./configure --prefix=${PYTHON_DIR} \
-     && ./configure --prefix=${PYTHON_DIR} \
-          --build="$ARCH" \
-          --enable-loadable-sqlite-extensions \
-          --enable-shared \
-          --with-system-expat \
-     && make -j"$(nproc)" \
-     && make install \
-     && ldconfig ${PYTHON_DIR}/lib \
-     && find ${PYTHON_DIR} -depth \
-           \( \
-             \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-             -o \
-             \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
-           \) -exec rm -rf '{}' +
-
+       --enable-loadable-sqlite-extensions \
+       --enable-shared \
+       --with-system-expat \
+  && make -j"$(nproc)" \
+  && make install \
+  && ldconfig ${PYTHON_DIR}/lib \
+  && find ${PYTHON_DIR} -depth \
+       \( \
+         \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+         -o \
+         \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+       \) -exec rm -rf '{}' +
 
 FROM ${baseImage} as runtime
 
 ENV PYTHON_DIR=/opt/python
-ENV PATH ${PYTHON_DIR}/bin:$PATH
-ENV LANG C.UTF-8
+ENV PATH=${PYTHON_DIR}/bin:$PATH
+ENV LANG=C.UTF-8
 
-ENV PYTHON_VERSION 3.13
-ENV PYTHON_PATCH_VERSION 8
+ENV PYTHON_VERSION=3.13
+ENV PYTHON_PATCH_VERSION=8
 
 COPY --from=build ${PYTHON_DIR} ${PYTHON_DIR}
-ENV LD_LIBRARY_PATH ${PYTHON_DIR}/lib:{LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=${PYTHON_DIR}/lib:${LD_LIBRARY_PATH}
 RUN ldconfig ${PYTHON_DIR}/lib
 
 # - In order to drop the root user, we have to make some directories world
@@ -50,9 +48,10 @@ RUN ldconfig ${PYTHON_DIR}/lib
 #   under random UID.
 RUN chown -R ${USER}:0 ${APP_ROOT} && \
     chmod +x /usr/bin/fix-permissions &&  \
-  fix-permissions ${APP_ROOT} -P && \
-  rpm-file-permissions
+    fix-permissions ${APP_ROOT} -P && \
+    rpm-file-permissions
 
 USER ${USER}
 
-RUN python3 -m pip install --upgrade --user pip wheel && find ${APP_ROOT}/.local -type d -exec chmod 0755 {} \;
+RUN python3 -m pip install --upgrade --user pip wheel && \
+    find ${APP_ROOT}/.local -type d -exec chmod 0755 {} \;
