@@ -15,17 +15,14 @@ WORKDIR ${HOME}
 RUN microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel ncurses-devel xz xz-devel \
 ENV PYTHON_SKIP_TESTS="test_xml_etree_c"
 
-RUN dnf install -y --setopt=tsflags=nodocs \
-      gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget cmake git \
-      zlib-devel sqlite-devel ncurses-devel \
-     && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
-     && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
-     && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
+microdnf install -y --setopt=tsflags=nodocs gcc openssl-devel bzip2-devel libffi-devel expat-devel make wget tar gzip zlib-devel sqlite-devel ncurses-devel xz xz-devel \
+  && wget https://www.python.org/ftp/python/${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}/Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
+  && tar xzf Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION}.tgz \
+  && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
+  && ./configure --prefix=${PYTHON_DIR} \
      && ./configure --prefix=${PYTHON_DIR} \
           --build="$ARCH" \
           --enable-loadable-sqlite-extensions \
-          --enable-optimizations \
-          --enable-option-checking=fatal \
           --enable-shared \
           --with-system-expat \
      && make -j"$(nproc)" \
