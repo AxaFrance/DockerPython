@@ -25,6 +25,14 @@ Create docker image base :
 - UBI9 runtime python 3.11 [![Docker UBI 9 runtime Python 3.11](https://img.shields.io/docker/pulls/axaguildev/runtime-ubi9-python3.11.svg)](https://hub.docker.com/r/axaguildev/runtime-ubi9-python3.11)
 - UBI9 build python 3.11 with tesseract [![Docker UBI 9 Python 3.1 tesseract](https://img.shields.io/docker/pulls/axaguildev/build-ubi9-python3.11-tesseract.svg)](https://hub.docker.com/r/axaguildev/build-ubi9-python3.11-tesseract)
 
+- UBI9 build python 3.12 [![Docker UBI 9 build Python 3.12](https://img.shields.io/docker/pulls/axaguildev/build-ubi9-python3.12.svg)](https://hub.docker.com/r/axaguildev/build-ubi9-python3.12)
+- UBI9 runtime python 3.12 [![Docker UBI 9 runtime Python 3.12](https://img.shields.io/docker/pulls/axaguildev/runtime-ubi9-python3.12.svg)](https://hub.docker.com/r/axaguildev/runtime-ubi9-python3.12)
+
+- UBI9 build python 3.13 [![Docker UBI 9 build Python 3.13](https://img.shields.io/docker/pulls/axaguildev/build-ubi9-python3.13.svg)](https://hub.docker.com/r/axaguildev/build-ubi9-python3.13)
+- UBI9 runtime python 3.13 [![Docker UBI 9 runtime Python 3.13](https://img.shields.io/docker/pulls/axaguildev/runtime-ubi9-python3.13.svg)](https://hub.docker.com/r/axaguildev/runtime-ubi9-python3.13)
+
+- UBI9 build python 3.14 [![Docker UBI 9 build Python 3.14](https://img.shields.io/docker/pulls/axaguildev/build-ubi9-python3.14.svg)](https://hub.docker.com/r/axaguildev/build-ubi9-python3.14)
+- UBI9 runtime python 3.14 [![Docker UBI 9 runtime Python 3.14](https://img.shields.io/docker/pulls/axaguildev/runtime-ubi9-python3.14.svg)](https://hub.docker.com/r/axaguildev/runtime-ubi9-python3.14)
 
 - UBI9 build node20 [![Docker UBI 9 build node 20](https://img.shields.io/docker/pulls/axaguildev/build-ubi9-node20.svg)](https://hub.docker.com/r/axaguildev/build-ubi9-node20)
 - UBI9 runtime nginx [![Docker UBI 9 runtime nginx](https://img.shields.io/docker/pulls/axaguildev/runtime-ubi9-nginx.svg)](https://hub.docker.com/r/axaguildev/runtime-ubi9-nginx)
