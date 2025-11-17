@@ -2,8 +2,8 @@ ARG baseImage
 
 FROM ${baseImage} as build
 
-ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 14
+ENV PYTHON_VERSION 3.13
+ENV PYTHON_PATCH_VERSION 8
 
 ENV PYTHON_DIR=/opt/python
 ENV PATH=${PYTHON_DIR}/bin:$PATH
@@ -19,11 +19,8 @@ RUN microdnf install -y --setopt=tsflags=nodocs \
   && cd Python-${PYTHON_VERSION}.${PYTHON_PATCH_VERSION} \
   && ./configure --prefix=${PYTHON_DIR} \
        --enable-loadable-sqlite-extensions \
-       --enable-optimizations \
-       --enable-option-checking=fatal \
        --enable-shared \
        --with-system-expat \
-       --with-system-ffi \
   && make -j"$(nproc)" \
   && make install \
   && ldconfig ${PYTHON_DIR}/lib \
@@ -40,8 +37,8 @@ ENV PYTHON_DIR=/opt/python
 ENV PATH=${PYTHON_DIR}/bin:$PATH
 ENV LANG=C.UTF-8
 
-ENV PYTHON_VERSION 3.11
-ENV PYTHON_PATCH_VERSION 14
+ENV PYTHON_VERSION 3.13
+ENV PYTHON_PATCH_VERSION 8
 
 RUN INSTALL_PKGS="expat" && \
   microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
@@ -60,6 +57,6 @@ RUN chown -R ${USER}:0 ${APP_ROOT} && \
   fix-permissions ${APP_ROOT} -P && \
   rpm-file-permissions
 
-ENV PYTHONPATH=${PYTHON_DIR}/lib/python3.11/site-packages
+ENV PYTHONPATH=${PYTHON_DIR}/lib/python3.13/site-packages
 
 USER ${USER}
