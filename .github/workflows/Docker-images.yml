@@ -80,33 +80,7 @@ jobs:
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      
-  build_ubi9_python314_image:
-    needs: [ tags, build_ubi9_image ]
-    uses: ./.github/workflows/Docker.yml
-    with:
-      image_name: "axaguildev/build-ubi9-python3.14"
-      image_version: ${{ needs.tags.outputs.new_version }}
-      image_build_args: "baseImage=axaguildev/build-ubi9:${{ needs.tags.outputs.new_version }}"
-      image_context: ./build/Python314
-      image_file: "./build/Python314/Dockerfile.ubi9"
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-  runtime_ubi9_python314_image:
-    needs: [ tags,runtime_ubi9_image ]
-    uses: ./.github/workflows/Docker.yml
-    with:
-      image_name: "axaguildev/runtime-ubi9-python3.14"
-      image_version: ${{ needs.tags.outputs.new_version }}
-      image_build_args: "baseImage=axaguildev/runtime-ubi9:${{ needs.tags.outputs.new_version }}"
-      image_context: ./runtime/Python314
-      image_file: "./runtime/Python314/Dockerfile.ubi9"
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      
+ 
   build_ubi9_python313_image:
     needs: [ tags, build_ubi9_image ]
     uses: ./.github/workflows/Docker.yml
